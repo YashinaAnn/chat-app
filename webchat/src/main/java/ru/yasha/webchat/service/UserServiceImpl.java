@@ -10,6 +10,8 @@ import ru.yasha.webchat.entity.User;
 import ru.yasha.webchat.mapper.UserMapper;
 import ru.yasha.webchat.repository.UserRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -44,5 +46,12 @@ public class UserServiceImpl implements UserService {
             user.setActive(false);
             messagingTemplate.convertAndSend("/topic/users/left", userMapper.userToDto(user));
         }
+    }
+
+    @Override
+    public List<UserDto> getActiveUsers() {
+        return userRepository.findByActive(true)
+                .stream().map(userMapper::userToDto)
+                .toList();
     }
 }

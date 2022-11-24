@@ -11,7 +11,7 @@ import ru.yasha.webchat.entity.User;
 import ru.yasha.webchat.mapper.UserMapper;
 import ru.yasha.webchat.repository.UserRepository;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -93,7 +93,7 @@ class UserServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void testLeftNotActiveUser() {
+    void testLeftInactiveUser() {
         User user = userRepository.save(getUser(false));
         UserDto userDto = userMapper.userToDto(user);
         doNothing().when(template).convertAndSend("/topic/users/left", userDto);
@@ -116,5 +116,26 @@ class UserServiceTest extends BaseServiceTest {
         userService.left(userDto);
 
         assertThat(userRepository.findByEmail(userDto.getEmail())).isEmpty();
+    }
+
+    @Test
+    void testGetActiveUsers() {
+        User userInactive = userRepository.save(getRandomUser(false));
+        User userActive = userRepository.save(getRandomUser(true));
+
+        List<UserDto> userList = userService.getActiveUsers();
+        assertThat(userList).isNotNull();
+        assertThat(userList).hasSize(1);
+        assertThat(userList).contains(userMapper.userToDto(userActive));
+        assertThat(userList).doesNotContain(userMapper.userToDto(userInactive));
+    }
+
+    @Test
+    void testGetActiveUser_AllInactive() {
+        userRepository.save(getRandomUser(false));
+
+        List<UserDto> userList = userService.getActiveUsers();
+        assertThat(userList).isNotNull();
+        assertThat(userList).isEmpty();
     }
 }
