@@ -1,0 +1,23 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+</head>
+<body>
+<h1>Chat</h1>
+
+<div><a href="/logout">Logout</a></div>
+
+<div th:if="${messages.empty}">
+    <div>No messages yet</div>
+</div>
+
+<div th:each="message : ${messages}">
+    <p><span th:text="${message.username}>> ${message.text} - ${message.time}"></span></p>
+</div>
+
+</body>
+</html>

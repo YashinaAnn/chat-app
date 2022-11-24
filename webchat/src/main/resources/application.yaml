@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: "chat-server"
+  jpa:
+    database: postgresql
+    open-in-view: true
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.jdbc.lob.non_contextual_creation: true
+      hibernate.dialect: org.hibernate.dialect.PostgreSQL95Dialect
+    sql:
+      init:
+        platform: postgresql
+        mode: embedded
+    datasource:
+      url: jdbc:postgresql://localhost:5432/webchat
+      username: local
+      password: root
+
+app:
+  input:
+    page: 0
+    size: 5
