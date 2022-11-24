@@ -2,7 +2,6 @@ package com.example.demo.websocket;
 
 import com.example.demo.config.AppConfigs;
 import com.example.demo.dto.ChatMessageDto;
-import com.example.demo.model.ChatMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -35,12 +34,12 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
 
     @Override
     public Type getPayloadType(StompHeaders headers) {
-        return ChatMessage.class;
+        return ChatMessageDto.class;
     }
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        ChatMessage msg = (ChatMessage) payload;
+        ChatMessageDto msg = (ChatMessageDto) payload;
         log.info("Received message: %s".formatted(msg.getText()));
     }
 }

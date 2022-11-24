@@ -2,7 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.client.MessageClient;
 import com.example.demo.config.AppConfigs;
-import com.example.demo.model.ChatMessage;
+import com.example.demo.dto.ChatMessageDto;
 import com.example.demo.websocket.MyStompSessionHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,33 +23,34 @@ public class ChatServiceImpl implements ChatService {
     private final MessageClient messageClient;
     private final AppConfigs configs;
 
-    private StompSession stompSession;
+    private ThreadLocal<StompSession> stompSession = new ThreadLocal<>();
 
     public void connect() throws Exception {
         log.info("Connecting to chat server: %s".formatted(configs.getWsUrl()));
-        stompSession = stompClient.connect(configs.getWsUrl(), sessionHandler).get();
+        stompSession.set(stompClient.connect(configs.getWsUrl(), sessionHandler).get());
     }
 
-    public void sendMessage(ChatMessage message, OidcUser user) {
+    public void sendMessage(ChatMessageDto message, OidcUser user) {
         // TODO - to add null 'stompSession' check
-        if (null == stompSession) return;
+        if (null == stompSession.get()) return;
 
-        message.setUsername(user.getName());
+        message.setUserName(user.getName());
+        message.setUserEmail(user.getEmail());
         log.info("Sending message '%s' to '%s'".formatted(message, configs.getPublishDestination()));
-        stompSession.send(configs.getPublishDestination(), message);
+        stompSession.get().send(configs.getPublishDestination(), message);
     }
 
     public void disconnect() {
         // TODO - to add null 'stompSession' check
-        if (null == stompSession) return;
+        if (null == stompSession.get()) return;
 
         log.info("Disconnecting from chat server");
-        stompSession.disconnect();
+        stompSession.get().disconnect();
         stompSession = null;
     }
 
     @Override
-    public List<ChatMessage> getMessages() {
+    public List<ChatMessageDto> getMessages() {
         return messageClient.getMessages();
     }
 }

@@ -1,7 +1,7 @@
 package com.example.demo.client;
 
 import com.example.demo.config.AppConfigs;
-import com.example.demo.model.ChatMessage;
+import com.example.demo.dto.ChatMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -18,16 +18,16 @@ public class MessageClient {
     private final WebClient webClient;
     private final AppConfigs configs;
 
-    public List<ChatMessage> getMessages() {
+    public List<ChatMessageDto> getMessages() {
         log.info("Retrieving messages...");
-        List<ChatMessage> messages = webClient.get()
+        List<ChatMessageDto> messages = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/messages")
                         .queryParam("page", configs.getPage())
                         .queryParam("size", configs.getSize())
                         .build())
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<ChatMessage>>(){})
+                .bodyToMono(new ParameterizedTypeReference<List<ChatMessageDto>>(){})
                 .block();
         log.info("Messages retrieved: {}", messages);
         return messages;
