@@ -15,8 +15,13 @@ public class AppConfigs {
 
     private String wsUrl;
     private String serverUrl;
-    private String subscribeDestination;
-    private String publishDestination;
+    private String messagesSubscription;
+    private String userJoinSubscription;
+    private String userLeftSubscription;
+    private String chatDestination;
+    private String userJoinDestination;
+    private String userLeftDestination;
+    private String logoutRedirectUrl;
     private int page;
     private int size;
 }

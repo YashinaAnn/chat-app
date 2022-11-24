@@ -16,7 +16,12 @@ app:
   input:
     wsUrl: "ws://localhost:8080/ws"
     serverUrl: "http://localhost:8080"
-    subscribeDestination: "/topic/messages"
-    publishDestination: "/app/chat"
+    messagesSubscription: "/topic/messages"
+    userJoinSubscription: "/topic/users/join"
+    userLeftSubscription: "/topic/users/left"
+    chatDestination: "/app/chat"
+    userJoinDestination: "/app/users/join"
+    userLeftDestination: "/app/users/left"
+    logoutRedirectUrl: "http://localhost:8081/"
     page: 0
     size: 5

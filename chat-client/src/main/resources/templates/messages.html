@@ -10,13 +10,19 @@
 <h1>Chat</h1>
 
 <div><a href="/logout">Logout</a></div>
+<div><a href="/leaveChat">Leave chat</a></div>
+
+<form action="#" th:action="@{/messages}" th:object="${message}" method="post">
+    <input type="text" id="text" name="text" />
+    <input type="submit" role="button" value="Send"/>
+</form>
 
 <div th:if="${messages.empty}">
     <div>No messages yet</div>
 </div>
 
 <div th:each="message : ${messages}">
-    <p><span th:text="${message.username}>> ${message.text} - ${message.time}"></span></p>
+    <p><span th:text="${message.text}"></span></p>
 </div>
 
 </body>

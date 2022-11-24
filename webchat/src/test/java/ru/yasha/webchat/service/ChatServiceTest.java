@@ -79,7 +79,7 @@ class ChatServiceTest extends BaseServiceTest {
         assertThat(message.getUser()).isEqualTo(user);
 
         messageDto.setId(message.getId());
-        messageDto.setTime(message.getTime());
+        messageDto.setTime(message.getTime().toString());
         verify(template, times(1))
                 .convertAndSend("/topic/messages", messageDto);
     }

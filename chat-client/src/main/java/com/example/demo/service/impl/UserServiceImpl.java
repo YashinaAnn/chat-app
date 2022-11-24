@@ -1,7 +1,8 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.client.UserClient;
 import com.example.demo.dto.UserDto;
+import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

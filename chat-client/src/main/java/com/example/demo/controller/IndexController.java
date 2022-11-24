@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Slf4j
 public class IndexController {
 
-    @GetMapping("/")
-    public String indexPage(Model model, @AuthenticationPrincipal OidcUser user) {
-        if (user != null) {
-            log.info("User: {}", user);
-        }
-        return "index";
-    }
+//    @GetMapping("/")
+//    public String indexPage(Model model, @AuthenticationPrincipal OidcUser user) {
+//        if (user != null) {
+//            log.info("User: {}", user);
+//        }
+//        return "index";
+//    }
 }

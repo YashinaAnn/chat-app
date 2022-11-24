@@ -16,7 +16,7 @@ public class ChatMessageDto implements Serializable {
 
     private Long id;
     private String text;
-    private LocalDateTime time;
+    private String time;
     private String userName;
     private String userEmail;
 }
