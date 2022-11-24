@@ -1,6 +1,7 @@
 package com.example.demo.websocket;
 
 import com.example.demo.config.AppConfigs;
+import com.example.demo.dto.ChatMessageDto;
 import com.example.demo.model.ChatMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

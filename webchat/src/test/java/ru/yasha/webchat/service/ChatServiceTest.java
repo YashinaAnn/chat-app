@@ -7,8 +7,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yasha.webchat.dto.ChatMessageDto;
 import ru.yasha.webchat.entity.ChatMessage;
+import ru.yasha.webchat.entity.User;
 import ru.yasha.webchat.repository.ChatMessageRepository;
+import ru.yasha.webchat.repository.UserRepository;
 
 import java.util.Comparator;
 import java.util.List;
@@ -19,51 +22,65 @@ import static org.mockito.Mockito.*;
 
 @Transactional
 @SpringBootTest
-class ChatServiceTest {
+class ChatServiceTest extends BaseServiceTest {
 
     @Autowired
     private ChatService chatService;
     @Autowired
     private ChatMessageRepository repository;
+    @Autowired
+    private UserRepository userRepository;
 
     @MockBean
     private SimpMessagingTemplate template;
 
     @Test
     void testGetLastNMessages_EmptyList() {
-        List<ChatMessage> messages = chatService.getMessages(PageRequest.of(0, 10));
+        List<ChatMessageDto> messages = chatService.getMessages(PageRequest.of(0, 10));
         assertThat(messages).asList().isEmpty();
     }
 
     @Test
     void testGetLastNMessages_All() {
-        repository.save(ChatMessage.builder().text("hi").build());
-        repository.save(ChatMessage.builder().text("hello").build());
-        repository.save(ChatMessage.builder().text("how are you?").build());
+        User user1 = userRepository.save(getUser(true));
+        repository.save(ChatMessage.builder().user(user1).text("hi").build());
+        repository.save(ChatMessage.builder().user(user1).text("hello").build());
+        repository.save(ChatMessage.builder().user(user1).text("how are you?").build());
 
-        List<ChatMessage> messages = chatService.getMessages(PageRequest.of(0, 2));
+        List<ChatMessageDto> messages = chatService.getMessages(PageRequest.of(0, 2));
         assertThat(messages).hasSize(2);
-        assertThat(messages).isSortedAccordingTo(Comparator.comparing(ChatMessage::getTime).reversed());
+        assertThat(messages).isSortedAccordingTo(Comparator.comparing(ChatMessageDto::getTime).reversed());
     }
 
     @Test
     void testGetLastNMessages_Partial() {
-        repository.save(ChatMessage.builder().text("hi").build());
+        User user1 = userRepository.save(getUser(true));
+        repository.save(ChatMessage.builder().user(user1).text("hi").build());
 
-        List<ChatMessage> messages = chatService.getMessages(PageRequest.of(0, 2));
+        List<ChatMessageDto> messages = chatService.getMessages(PageRequest.of(0, 2));
         assertThat(messages).hasSize(1);
     }
 
     @Test
     void testProcessMessage() {
-        ChatMessage message = ChatMessage.builder()
+        User user = userRepository.save(getUser(true));
+        ChatMessageDto messageDto = ChatMessageDto.builder()
                 .text("test message: %s".formatted(UUID.randomUUID()))
+                .userName(user.getName())
+                .userEmail(user.getEmail())
                 .build();
-        doNothing().when(template).convertAndSend("/topic/messages", message);
-        assertThat(repository.findByText(message.getText())).isEmpty();
+        doNothing().when(template).convertAndSend("/topic/messages", messageDto);
+        assertThat(repository.findByText(messageDto.getText())).isEmpty();
 
-        chatService.processMessage(message);
+        chatService.processMessage(messageDto);
 
-        assertThat(repository.findByText(message.getText())).isNotEmpty();
+        ChatMessage message = repository.findByText(messageDto.getText()).orElse(null);
+        assertThat(message).isNotNull();
+        assertThat(message.getUser()).isEqualTo(user);
+
+        messageDto.setId(message.getId());
+        messageDto.setTime(message.getTime());
+        verify(template, times(1))
+                .convertAndSend("/topic/messages", messageDto);
     }
 }

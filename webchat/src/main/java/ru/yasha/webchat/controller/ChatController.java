@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import ru.yasha.webchat.dto.ChatMessageDto;
 import ru.yasha.webchat.entity.ChatMessage;
 import ru.yasha.webchat.service.ChatService;
 
@@ -20,13 +21,13 @@ public class ChatController {
     private final ChatService chatService;
 
     @MessageMapping("/chat")
-    public void processMessage(ChatMessage message) {
+    public void processMessage(ChatMessageDto message) {
         chatService.processMessage(message);
     }
 
     @GetMapping("/messages")
     @ResponseBody
-    public ResponseEntity<List<ChatMessage>> getMessages(
+    public ResponseEntity<List<ChatMessageDto>> getMessages(
             @RequestParam(required = false, defaultValue = "${app.input.page}") int page,
             @RequestParam(required = false, defaultValue = "${app.input.size}") int size) {
         return ResponseEntity.ok(chatService.getMessages(PageRequest.of(page, size)));

@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void left(UserDto userDto) {
         log.info("User left {}", userDto.getEmail());
-        User user = userRepository.findByEmail(userDto.getEmail()).orElse(null);
+        User user = userRepository.findByEmail(userDto.getEmail()).orElse(null); // TODO - or exception
         if (user != null && user.isActive()) {
             user.setActive(false);
             messagingTemplate.convertAndSend("/topic/users/left", userMapper.userToDto(user));

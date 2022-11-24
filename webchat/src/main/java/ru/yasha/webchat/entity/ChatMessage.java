@@ -21,9 +21,11 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String text;
-    private String username;
     @CreationTimestamp
     private LocalDateTime time;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     @Version
     private Long version;
 
