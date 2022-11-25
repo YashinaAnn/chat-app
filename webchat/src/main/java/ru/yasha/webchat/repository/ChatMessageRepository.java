@@ -2,7 +2,6 @@ package ru.yasha.webchat.repository;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import ru.yasha.webchat.entity.ChatMessage;
 

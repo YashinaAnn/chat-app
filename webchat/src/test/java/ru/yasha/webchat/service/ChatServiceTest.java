@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yasha.webchat.dto.ChatMessageDto;
 import ru.yasha.webchat.entity.ChatMessage;
 import ru.yasha.webchat.entity.User;
+import ru.yasha.webchat.mapper.ChatMessageMapper;
 import ru.yasha.webchat.repository.ChatMessageRepository;
 import ru.yasha.webchat.repository.UserRepository;
 
@@ -30,6 +31,8 @@ class ChatServiceTest extends BaseServiceTest {
     private ChatMessageRepository repository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ChatMessageMapper messageMapper;
 
     @MockBean
     private SimpMessagingTemplate template;
@@ -77,10 +80,7 @@ class ChatServiceTest extends BaseServiceTest {
         ChatMessage message = repository.findByText(messageDto.getText()).orElse(null);
         assertThat(message).isNotNull();
         assertThat(message.getUser()).isEqualTo(user);
-
-        messageDto.setId(message.getId());
-        messageDto.setTime(message.getTime().toString());
         verify(template, times(1))
-                .convertAndSend("/topic/messages", messageDto);
+                .convertAndSend("/topic/messages", messageMapper.messageToDto(message));
     }
 }

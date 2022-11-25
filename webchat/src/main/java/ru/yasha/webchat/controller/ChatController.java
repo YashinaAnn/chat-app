@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ru.yasha.webchat.dto.ChatMessageDto;
-import ru.yasha.webchat.entity.ChatMessage;
 import ru.yasha.webchat.service.ChatService;
 
 import java.util.List;
