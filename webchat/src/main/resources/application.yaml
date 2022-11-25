@@ -1,3 +1,6 @@
+server:
+  port: 8081
+
 spring:
   application:
     name: "chat-server"
@@ -11,14 +14,21 @@ spring:
     properties:
       hibernate.jdbc.lob.non_contextual_creation: true
       hibernate.dialect: org.hibernate.dialect.PostgreSQL95Dialect
-    sql:
-      init:
-        platform: postgresql
-        mode: embedded
-    datasource:
-      url: jdbc:postgresql://localhost:5432/webchat
-      username: local
-      password: root
+  sql:
+    init:
+      platform: postgresql
+      mode: embedded
+  datasource:
+    url: jdbc:postgresql://localhost:5432/webchat
+    username: local
+    password: root
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: "440439735116-osh21lackvhj4o21c8ne05hk7vmdokkl.apps.googleusercontent.com"
+            clientSecret: "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"
 
 app:
   input:
