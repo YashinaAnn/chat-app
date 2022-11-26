@@ -3,13 +3,37 @@ var stompClient = null;
 function joinChat() {
     let username = $("#username").val();
     sessionStorage.setItem("username", username);
-    location.href = "/chat.html";
+    $.ajax({
+      type: "POST",
+      url: "/users",
+      data: JSON.stringify({"name": username}),
+      contentType: "application/json",
+      success: function (result) {
+        console.log(result);
+        location.href = "/chat.html";
+      },
+      error: function (result, status) {
+        console.log(result);
+        console.log(status);
+        console.log(result.responseText);
+        alert(result.responseText);
+      }
+    });
 }
 
 function leaveChat() {
     stompClient.send('/app/users/left', {}, JSON.stringify({'name': getUsername()}));
     disconnect();
     location.href = "/";
+}
+
+function prepareChat() {
+    if (getUsername() == null) {
+        location.href = "/";
+    }
+    connect();
+    showMessages();
+    showUsers();
 }
 
 function connect() {
@@ -30,10 +54,7 @@ function connect() {
             showOfflineUser(JSON.parse(user.body));
         });
 
-        stompClient.send('/app/users/join', {}, JSON.stringify({'name': getUsername()}));
-
-        showUsers();
-        showMessages();
+        //stompClient.send('/app/users/join', {}, JSON.stringify({'name': getUsername()}));
     });
 }
 
@@ -62,7 +83,6 @@ function showMessages() {
 function showUsers() {
     $.getJSON('/users/active', function(result) {
         for (var user of result) {
-            if (user.name == getUsername()) continue;
             showOnlineUser(user);
         }
     });
@@ -96,7 +116,11 @@ function showOnlineUser(user) {
     var changed = changeUserStatus(user, 'offline', 'online');
     if (!changed) {
         var ul = document.getElementById("users");
-        ul.innerHTML += "<li class=\"clearfix active\"><div class=\"about\">"
+        var cssClass = "clearfix";
+        if (user.name == getUsername()) {
+            cssClass += " active";
+        }
+        ul.innerHTML += "<li class=\"" + cssClass + "\"><div class=\"about\">"
         + "<div class=\"name\">" + user.name + "</div>"
         + "<div class=\"status\"> <i class=\"fa fa-circle online\"></i> online </div></div></li>"
     }
@@ -113,7 +137,10 @@ function changeUserStatus(user, oldStatus, newStatus) {
       var userElem = items[i].querySelector(".about");
       if (userElem.querySelector(".name").innerText == user.name) {
         var statusElem = userElem.querySelector(".status");
-        statusElem.innerHTML = "<i class=\"fa fa-circle " + newStatus + "\"></i>" + newStatus;
+        statusElem.innerHTML = "<i class=\"fa fa-circle " + newStatus + "\"></i> " + newStatus;
+        if (user.name == getUsername()) {
+            items[i].className += " active";
+        }
         return true;
       }
     }

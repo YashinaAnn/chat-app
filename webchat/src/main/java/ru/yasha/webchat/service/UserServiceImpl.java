@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yasha.webchat.dto.UserDto;
 import ru.yasha.webchat.entity.User;
+import ru.yasha.webchat.exception.UsernameAlreadyInUseException;
 import ru.yasha.webchat.mapper.UserMapper;
 import ru.yasha.webchat.repository.UserRepository;
 
@@ -27,8 +28,11 @@ public class UserServiceImpl implements UserService {
         log.info("Joining user {}", userDto.getName());
         User user = userRepository.findByName(userDto.getName()).orElse(null);
         if (user != null) {
-            if (user.isActive()) return;
-            user.setActive(true);
+            if (user.getEmail().equals(userDto.getEmail())) {
+                user.setActive(true);
+            } else {
+                throw new UsernameAlreadyInUseException("Username already in use, please select another");
+            }
         } else {
             user = userMapper.dtoToUser(userDto);
             user.setActive(true);

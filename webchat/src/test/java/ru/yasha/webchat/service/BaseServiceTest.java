@@ -10,12 +10,14 @@ public class BaseServiceTest {
     protected UserDto getUserDto() {
         return UserDto.builder()
                 .name("user1")
+                .email("user1@test.com")
                 .build();
     }
 
     private User getUser(boolean active, String name, String email) {
         return User.builder()
                 .name(name)
+                .email(email)
                 .active(active)
                 .build();
     }

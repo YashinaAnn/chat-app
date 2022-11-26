@@ -8,12 +8,14 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yasha.webchat.dto.UserDto;
 import ru.yasha.webchat.entity.User;
+import ru.yasha.webchat.exception.UsernameAlreadyInUseException;
 import ru.yasha.webchat.mapper.UserMapper;
 import ru.yasha.webchat.repository.UserRepository;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @Transactional
@@ -61,16 +63,17 @@ class UserServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void testJoinAlreadyJoinedUser() {
-        User user = userRepository.save(getUser(true));
+    void testJoinUser_UsernameInUse() {
+        User user = userRepository.save(getUser(false));
         UserDto userDto = userMapper.userToDto(user);
+        userDto.setEmail("another@test.com");
         doNothing().when(template).convertAndSend("/topic/users/join", userDto);
 
-        userService.join(userDto);
+        assertThrows(UsernameAlreadyInUseException.class, () -> userService.join(userDto));
 
         user = userRepository.findByName(userDto.getName()).orElse(null);
         assertThat(user).isNotNull();
-        assertThat(user.isActive()).isTrue();
+        assertThat(user.isActive()).isFalse();
 
         verify(template, times(0))
                 .convertAndSend("/topic/users/join", userMapper.userToDto(user));

@@ -15,6 +15,7 @@ public class SecurityConfig {
 
         return http.authorizeHttpRequests(config -> config
                         .anyRequest().authenticated())
+                .csrf().disable()
                 .oauth2Login()
                 .and()
                 .logout(config -> config

@@ -10,9 +10,8 @@
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <script src="/app.js"></script>
     <script>
-    window.onload = function(){
-        connect();
-    }
+        window.onload = prepareChat;
+        window.onbeforeunload = leaveChat;
     </script>
 </head>
 <body>
