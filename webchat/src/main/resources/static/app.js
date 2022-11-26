@@ -14,9 +14,7 @@ function joinChat() {
       },
       error: function (result, status) {
         console.log(result);
-        console.log(status);
-        console.log(result.responseText);
-        alert(result.responseText);
+        alert(result.responseJSON.message);
       }
     });
 }
@@ -53,8 +51,6 @@ function connect() {
             console.log(user);
             showOfflineUser(JSON.parse(user.body));
         });
-
-        //stompClient.send('/app/users/join', {}, JSON.stringify({'name': getUsername()}));
     });
 }
 
