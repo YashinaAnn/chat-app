@@ -18,8 +18,8 @@ public abstract class ChatMessageMapperDecorator implements ChatMessageMapper {
     @Override
     public ChatMessage dtoToMessage(ChatMessageDto dto) {
         ChatMessage message = mapper.dtoToMessage(dto);
-        User user = userRepository.findByEmail(dto.getUserEmail())
-                .orElseThrow(() -> new UserNotFoundException("Email is not found: " + dto.getUserEmail()));
+        User user = userRepository.findByName(dto.getUsername())
+                .orElseThrow(() -> new UserNotFoundException("Email is not found: " + dto.getUsername()));
         message.setUser(user);
         return message;
     }

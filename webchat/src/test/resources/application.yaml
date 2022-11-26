@@ -6,3 +6,10 @@ spring:
     url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
     username: sa
     password: sa
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: "440439735116-osh21lackvhj4o21c8ne05hk7vmdokkl.apps.googleusercontent.com"
+            clientSecret: "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"

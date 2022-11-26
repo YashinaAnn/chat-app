@@ -36,7 +36,7 @@ class UserServiceTest extends BaseServiceTest {
 
         userService.join(userDto);
 
-        User user = userRepository.findByEmail(userDto.getEmail()).orElse(null);
+        User user = userRepository.findByName(userDto.getName()).orElse(null);
         assertThat(user).isNotNull();
         assertThat(user.isActive()).isTrue();
 
@@ -52,7 +52,7 @@ class UserServiceTest extends BaseServiceTest {
 
         userService.join(userDto);
 
-        user = userRepository.findByEmail(userDto.getEmail()).orElse(null);
+        user = userRepository.findByName(userDto.getName()).orElse(null);
         assertThat(user).isNotNull();
         assertThat(user.isActive()).isTrue();
 
@@ -68,7 +68,7 @@ class UserServiceTest extends BaseServiceTest {
 
         userService.join(userDto);
 
-        user = userRepository.findByEmail(userDto.getEmail()).orElse(null);
+        user = userRepository.findByName(userDto.getName()).orElse(null);
         assertThat(user).isNotNull();
         assertThat(user.isActive()).isTrue();
 
@@ -84,7 +84,7 @@ class UserServiceTest extends BaseServiceTest {
 
         userService.left(userDto);
 
-        user = userRepository.findByEmail(userDto.getEmail()).orElse(null);
+        user = userRepository.findByName(userDto.getName()).orElse(null);
         assertThat(user).isNotNull();
         assertThat(user.isActive()).isFalse();
 
@@ -100,7 +100,7 @@ class UserServiceTest extends BaseServiceTest {
 
         userService.left(userDto);
 
-        user = userRepository.findByEmail(userDto.getEmail()).orElse(null);
+        user = userRepository.findByName(userDto.getName()).orElse(null);
         assertThat(user).isNotNull();
         assertThat(user.isActive()).isFalse();
 
@@ -115,7 +115,7 @@ class UserServiceTest extends BaseServiceTest {
 
         userService.left(userDto);
 
-        assertThat(userRepository.findByEmail(userDto.getEmail())).isEmpty();
+        assertThat(userRepository.findByName(userDto.getName())).isEmpty();
     }
 
     @Test

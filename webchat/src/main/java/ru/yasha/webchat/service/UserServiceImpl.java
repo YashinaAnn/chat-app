@@ -24,8 +24,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void join(UserDto userDto) {
-        log.info("Joining user {}", userDto.getEmail());
-        User user = userRepository.findByEmail(userDto.getEmail()).orElse(null);
+        log.info("Joining user {}", userDto.getName());
+        User user = userRepository.findByName(userDto.getName()).orElse(null);
         if (user != null) {
             if (user.isActive()) return;
             user.setActive(true);
@@ -40,8 +40,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void left(UserDto userDto) {
-        log.info("User left {}", userDto.getEmail());
-        User user = userRepository.findByEmail(userDto.getEmail()).orElse(null); // TODO - or exception
+        log.info("User left {}", userDto.getName());
+        User user = userRepository.findByName(userDto.getName()).orElse(null); // TODO - or exception
         if (user != null && user.isActive()) {
             user.setActive(false);
             messagingTemplate.convertAndSend("/topic/users/left", userMapper.userToDto(user));

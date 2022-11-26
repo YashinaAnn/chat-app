@@ -69,8 +69,7 @@ class ChatServiceTest extends BaseServiceTest {
         User user = userRepository.save(getUser(true));
         ChatMessageDto messageDto = ChatMessageDto.builder()
                 .text("test message: %s".formatted(UUID.randomUUID()))
-                .userName(user.getName())
-                .userEmail(user.getEmail())
+                .username(user.getName())
                 .build();
         doNothing().when(template).convertAndSend("/topic/messages", messageDto);
         assertThat(repository.findByText(messageDto.getText())).isEmpty();

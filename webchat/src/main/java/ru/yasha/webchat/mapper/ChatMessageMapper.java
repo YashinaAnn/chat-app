@@ -12,8 +12,7 @@ public interface ChatMessageMapper {
 
     ChatMessage dtoToMessage(ChatMessageDto dto);
 
-    @Mapping(source = "user.name", target = "userName")
-    @Mapping(source = "user.email", target = "userEmail")
+    @Mapping(source = "user.name", target = "username")
     @Mapping(source = "time", target = "time", dateFormat = "EEE, MMM d, yy")
     ChatMessageDto messageToDto(ChatMessage message);
 }

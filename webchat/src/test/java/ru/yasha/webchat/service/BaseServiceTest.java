@@ -9,7 +9,6 @@ public class BaseServiceTest {
 
     protected UserDto getUserDto() {
         return UserDto.builder()
-                .email("user1@test.com")
                 .name("user1")
                 .build();
     }
@@ -17,7 +16,6 @@ public class BaseServiceTest {
     private User getUser(boolean active, String name, String email) {
         return User.builder()
                 .name(name)
-                .email(email)
                 .active(active)
                 .build();
     }
