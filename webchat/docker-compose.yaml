@@ -1,0 +1,19 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: local
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: "webchat"
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  chat-app:
+    container_name: chat-app
+    build: .
+    ports:
+      - "8081:8081"
+volumes:
+  pgdata:

@@ -19,7 +19,7 @@ spring:
       platform: postgresql
       mode: embedded
   datasource:
-    url: jdbc:postgresql://localhost:5432/webchat
+    url: jdbc:postgresql://postgres:5432/webchat
     username: local
     password: root
   security:
