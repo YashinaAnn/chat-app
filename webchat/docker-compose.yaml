@@ -3,8 +3,8 @@ services:
     container_name: postgres
     image: postgres
     environment:
-      POSTGRES_USER: local
-      POSTGRES_PASSWORD: root
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: "webchat"
     ports:
       - "5432:5432"
@@ -15,5 +15,8 @@ services:
     build: .
     ports:
       - "8081:8081"
+    depends_on:
+    - postgres
+    env_file: .env
 volumes:
   pgdata:

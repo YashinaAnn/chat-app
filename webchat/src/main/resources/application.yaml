@@ -19,16 +19,16 @@ spring:
       platform: postgresql
       mode: embedded
   datasource:
-    url: jdbc:postgresql://postgres:5432/webchat
-    username: local
-    password: root
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/webchat}
+    username: ${POSTGRES_USER:local}
+    password: ${POSTGRES_PASSWORD:root}
   security:
     oauth2:
       client:
         registration:
           google:
-            clientId: "440439735116-osh21lackvhj4o21c8ne05hk7vmdokkl.apps.googleusercontent.com"
-            clientSecret: "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"
+            clientId: ${CLIENT_ID}
+            clientSecret: ${CLIENT_SECRET}
 
 app:
   input:
