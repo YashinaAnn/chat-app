@@ -4,7 +4,6 @@
 Для запуска приложения выполните команды:
 ```
 cd chat-app
-./gradlew clean build
 docker-compose up
 ```
 
