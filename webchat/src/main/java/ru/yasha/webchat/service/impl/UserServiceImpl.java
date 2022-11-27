@@ -1,4 +1,4 @@
-package ru.yasha.webchat.service;
+package ru.yasha.webchat.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +10,7 @@ import ru.yasha.webchat.entity.User;
 import ru.yasha.webchat.exception.UsernameAlreadyInUseException;
 import ru.yasha.webchat.mapper.UserMapper;
 import ru.yasha.webchat.repository.UserRepository;
+import ru.yasha.webchat.service.UserService;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void join(UserDto userDto) {
+    public UserDto join(UserDto userDto) {
         log.info("Joining user {}", userDto.getName());
         User user = userRepository.findByName(userDto.getName()).orElse(null);
         if (user != null) {
@@ -38,14 +39,16 @@ public class UserServiceImpl implements UserService {
             user.setActive(true);
             userRepository.save(user);
         }
-        messagingTemplate.convertAndSend("/topic/users/join", userMapper.userToDto(user));
+        userDto = userMapper.userToDto(user);
+        messagingTemplate.convertAndSend("/topic/users/join", userDto);
+        return userDto;
     }
 
     @Override
     @Transactional
     public void left(UserDto userDto) {
         log.info("User left {}", userDto.getName());
-        User user = userRepository.findByName(userDto.getName()).orElse(null); // TODO - or exception
+        User user = userRepository.findByName(userDto.getName()).orElse(null);
         if (user != null && user.isActive()) {
             user.setActive(false);
             messagingTemplate.convertAndSend("/topic/users/left", userMapper.userToDto(user));

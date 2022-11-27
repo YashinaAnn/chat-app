@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserService {
 
-    void join(UserDto user);
+    UserDto join(UserDto user);
     void left(UserDto user);
 
     List<UserDto> getActiveUsers();

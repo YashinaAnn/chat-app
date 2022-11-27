@@ -81,7 +81,7 @@ function showMessages() {
 }
 
 function showUsers() {
-    $.getJSON('/users/active', function(result) {
+    $.getJSON('/users', function(result) {
         for (var user of result) {
             showOnlineUser(user);
         }

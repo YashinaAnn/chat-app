@@ -1,4 +1,4 @@
-package ru.yasha.webchat.service;
+package ru.yasha.webchat.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +9,7 @@ import ru.yasha.webchat.dto.ChatMessageDto;
 import ru.yasha.webchat.entity.ChatMessage;
 import ru.yasha.webchat.mapper.ChatMessageMapper;
 import ru.yasha.webchat.repository.ChatMessageRepository;
+import ru.yasha.webchat.service.ChatService;
 
 import java.util.List;
 
