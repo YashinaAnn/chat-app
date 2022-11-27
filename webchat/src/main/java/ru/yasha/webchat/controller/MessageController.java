@@ -9,19 +9,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ru.yasha.webchat.dto.ChatMessageDto;
-import ru.yasha.webchat.service.ChatService;
+import ru.yasha.webchat.service.MessageService;
 
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class ChatController {
+public class MessageController {
 
-    private final ChatService chatService;
+    private final MessageService messageService;
 
     @MessageMapping("/chat")
     public void processMessage(ChatMessageDto message) {
-        chatService.processMessage(message);
+        messageService.processMessage(message);
     }
 
     @GetMapping("/messages")
@@ -29,6 +29,6 @@ public class ChatController {
     public ResponseEntity<List<ChatMessageDto>> getMessages(
             @RequestParam(required = false, defaultValue = "${app.input.page}") int page,
             @RequestParam(required = false, defaultValue = "${app.input.size}") int size) {
-        return ResponseEntity.ok(chatService.getMessages(PageRequest.of(page, size)));
+        return ResponseEntity.ok(messageService.getMessages(PageRequest.of(page, size)));
     }
 }

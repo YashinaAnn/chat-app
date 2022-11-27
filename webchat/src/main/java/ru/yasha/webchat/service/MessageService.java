@@ -5,7 +5,7 @@ import ru.yasha.webchat.dto.ChatMessageDto;
 
 import java.util.List;
 
-public interface ChatService {
+public interface MessageService {
 
     void processMessage(ChatMessageDto message);
 

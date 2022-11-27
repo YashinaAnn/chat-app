@@ -7,7 +7,7 @@ import java.util.List;
 public interface UserService {
 
     UserDto join(UserDto user);
-    void left(UserDto user);
+    void leave(UserDto user);
 
     List<UserDto> getActiveUsers();
 }

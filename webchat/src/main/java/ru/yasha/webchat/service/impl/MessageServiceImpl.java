@@ -9,14 +9,14 @@ import ru.yasha.webchat.dto.ChatMessageDto;
 import ru.yasha.webchat.entity.ChatMessage;
 import ru.yasha.webchat.mapper.ChatMessageMapper;
 import ru.yasha.webchat.repository.ChatMessageRepository;
-import ru.yasha.webchat.service.ChatService;
+import ru.yasha.webchat.service.MessageService;
 
 import java.util.List;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ChatServiceImpl implements ChatService {
+public class MessageServiceImpl implements MessageService {
 
     private final ChatMessageRepository repository;
     private final SimpMessagingTemplate messagingTemplate;
@@ -24,7 +24,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void processMessage(ChatMessageDto messageDto) {
-        log.info("Processing message: %s".formatted(messageDto));
+        log.debug("Processing message: {}", messageDto);
         ChatMessage message = messageMapper.dtoToMessage(messageDto);
         repository.save(message);
         messagingTemplate.convertAndSend("/topic/messages", messageMapper.messageToDto(message));

@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto join(UserDto userDto) {
-        log.info("Joining user {}", userDto.getName());
+        log.debug("Joining user {}", userDto.getName());
         User user = userRepository.findByName(userDto.getName()).orElse(null);
         if (user != null) {
             if (user.getEmail().equals(userDto.getEmail())) {
@@ -46,8 +46,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void left(UserDto userDto) {
-        log.info("User left {}", userDto.getName());
+    public void leave(UserDto userDto) {
+        log.debug("Disconnecting users {}", userDto.getName());
         User user = userRepository.findByName(userDto.getName()).orElse(null);
         if (user != null && user.isActive()) {
             user.setActive(false);

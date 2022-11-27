@@ -23,10 +23,10 @@ import static org.mockito.Mockito.*;
 
 @Transactional
 @SpringBootTest
-class ChatServiceTest extends BaseServiceTest {
+class MessageServiceTest extends BaseServiceTest {
 
     @Autowired
-    private ChatService chatService;
+    private MessageService messageService;
     @Autowired
     private ChatMessageRepository repository;
     @Autowired
@@ -39,7 +39,7 @@ class ChatServiceTest extends BaseServiceTest {
 
     @Test
     void testGetLastNMessages_EmptyList() {
-        List<ChatMessageDto> messages = chatService.getMessages(PageRequest.of(0, 10));
+        List<ChatMessageDto> messages = messageService.getMessages(PageRequest.of(0, 10));
         assertThat(messages).asList().isEmpty();
     }
 
@@ -50,7 +50,7 @@ class ChatServiceTest extends BaseServiceTest {
         repository.save(ChatMessage.builder().user(user1).text("hello").build());
         repository.save(ChatMessage.builder().user(user1).text("how are you?").build());
 
-        List<ChatMessageDto> messages = chatService.getMessages(PageRequest.of(0, 2));
+        List<ChatMessageDto> messages = messageService.getMessages(PageRequest.of(0, 2));
         assertThat(messages).hasSize(2);
         assertThat(messages).isSortedAccordingTo(Comparator.comparing(ChatMessageDto::getTime).reversed());
     }
@@ -60,7 +60,7 @@ class ChatServiceTest extends BaseServiceTest {
         User user1 = userRepository.save(getUser(true));
         repository.save(ChatMessage.builder().user(user1).text("hi").build());
 
-        List<ChatMessageDto> messages = chatService.getMessages(PageRequest.of(0, 2));
+        List<ChatMessageDto> messages = messageService.getMessages(PageRequest.of(0, 2));
         assertThat(messages).hasSize(1);
     }
 
@@ -74,7 +74,7 @@ class ChatServiceTest extends BaseServiceTest {
         doNothing().when(template).convertAndSend("/topic/messages", messageDto);
         assertThat(repository.findByText(messageDto.getText())).isEmpty();
 
-        chatService.processMessage(messageDto);
+        messageService.processMessage(messageDto);
 
         ChatMessage message = repository.findByText(messageDto.getText()).orElse(null);
         assertThat(message).isNotNull();

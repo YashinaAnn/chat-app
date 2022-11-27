@@ -24,7 +24,7 @@ function joinChat() {
 }
 
 function leaveChat() {
-    stompClient.send('/app/users/left', {}, JSON.stringify({'name': getUsername()}));
+    stompClient.send('/app/chat/leave', {}, JSON.stringify({'name': getUsername()}));
     disconnect();
     location.href = "/";
 }
@@ -97,16 +97,16 @@ function showMessage(message) {
 }
 
 function showOtherMessage(message) {
-    var ul = document.getElementById("messages");
-    ul.innerHTML += "<li class=\"clearfix\"><div class=\"message-data text-right\">"
+    $("#messages")[0].innerHTML +=
+    "<li class=\"clearfix\"><div class=\"message-data text-right\">"
     + "<span class=\"message-data-user\">" + message.username + ", </span>"
     + "<span class=\"message-data-time\">" + message.time + "</span></div>"
     + "<div class=\"message other-message float-right\"> "+ message.text + " </div></li>";
 }
 
 function showMyMessage(message) {
-    var ul = document.getElementById("messages");
-    ul.innerHTML += "<li class=\"clearfix\"><div class=\"message-data\">"
+    $("#messages")[0].innerHTML +=
+    "<li class=\"clearfix\"><div class=\"message-data\">"
     + "<span class=\"message-data-user\">You, </span>"
     + "<span class=\"message-data-time\">" + message.time + "</span></div>"
     + "<div class=\"message my-message\">" + message.text + "</div></li>";
@@ -115,12 +115,12 @@ function showMyMessage(message) {
 function showOnlineUser(user) {
     var changed = changeUserStatus(user, 'offline', 'online');
     if (!changed) {
-        var ul = document.getElementById("users");
         var cssClass = "clearfix";
         if (user.name == getUsername()) {
             cssClass += " active";
         }
-        ul.innerHTML += "<li class=\"" + cssClass + "\"><div class=\"about\">"
+        $("#users")[0].innerHTML +=
+        "<li class=\"" + cssClass + "\"><div class=\"about\">"
         + "<div class=\"name\">" + user.name + "</div>"
         + "<div class=\"status\"> <i class=\"fa fa-circle online\"></i> online </div></div></li>"
     }
@@ -131,15 +131,14 @@ function showOfflineUser(user) {
 }
 
 function changeUserStatus(user, oldStatus, newStatus) {
-    var ul = document.getElementById("users");
-    var items = ul.getElementsByTagName("li");
-    for (var i = 0; i < items.length; ++i) {
-      var userElem = items[i].querySelector(".about");
+    var li = $("#users li");
+    for (var i = 0; i < li.length; ++i) {
+      var userElem = li[i].querySelector(".about");
       if (userElem.querySelector(".name").innerText == user.name) {
         var statusElem = userElem.querySelector(".status");
         statusElem.innerHTML = "<i class=\"fa fa-circle " + newStatus + "\"></i> " + newStatus;
         if (user.name == getUsername()) {
-            items[i].className += " active";
+            li[i].className += " active";
         }
         return true;
       }

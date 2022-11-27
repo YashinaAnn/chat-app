@@ -18,5 +18,4 @@ public class ErrorDto {
                 .message(message)
                 .build();
     }
-
 }

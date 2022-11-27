@@ -85,7 +85,7 @@ class UserServiceTest extends BaseServiceTest {
         UserDto userDto = userMapper.userToDto(user);
         doNothing().when(template).convertAndSend("/topic/users/left", userDto);
 
-        userService.left(userDto);
+        userService.leave(userDto);
 
         user = userRepository.findByName(userDto.getName()).orElse(null);
         assertThat(user).isNotNull();
@@ -101,7 +101,7 @@ class UserServiceTest extends BaseServiceTest {
         UserDto userDto = userMapper.userToDto(user);
         doNothing().when(template).convertAndSend("/topic/users/left", userDto);
 
-        userService.left(userDto);
+        userService.leave(userDto);
 
         user = userRepository.findByName(userDto.getName()).orElse(null);
         assertThat(user).isNotNull();
@@ -116,7 +116,7 @@ class UserServiceTest extends BaseServiceTest {
         UserDto userDto = getUserDto();
         doNothing().when(template).convertAndSend("/topic/users/left", userDto);
 
-        userService.left(userDto);
+        userService.leave(userDto);
 
         assertThat(userRepository.findByName(userDto.getName())).isEmpty();
     }

@@ -22,21 +22,19 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/users")
-    @ResponseBody
-    public ResponseEntity<List<UserDto>> getActiveUsers() {
+    public @ResponseBody ResponseEntity<List<UserDto>> getActiveUsers() {
         return ResponseEntity.ok(userService.getActiveUsers());
     }
 
     @PostMapping("/users")
-    @ResponseBody
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto user,
-                                           @AuthenticationPrincipal OidcUser oidcUser) {
+    public @ResponseBody ResponseEntity<UserDto> connectUser(@RequestBody UserDto user,
+                                                             @AuthenticationPrincipal OidcUser oidcUser) {
         user.setEmail(oidcUser.getEmail());
         return ResponseEntity.ok().body(userService.join(user));
     }
 
-    @MessageMapping("/users/left")
-    public void leftUser(UserDto user) {
-        userService.left(user);
+    @MessageMapping("/chat/leave")
+    public void disconnectUser(UserDto user) {
+        userService.leave(user);
     }
 }
