@@ -4,7 +4,7 @@
 Для запуска приложения выполните команды:
 ```
 cd chat-app
-./gradlew build
+./gradlew clean build
 docker-compose up
 ```
 
@@ -13,15 +13,15 @@ docker-compose up
 Приложение доступно по адресу http://localhost:8081
 
 1. Пользователь авторизуется через Google
-- ![google](images/google.png)
+ ![google](images/google.png)
 2. Пользователь вводит свой ник
-- ![index.html](images/index.png)
+ ![index.html](images/index.png)
 3. Ник уникален, каждый ник однозначно соответствует Google почте, с которой он был впервые использован. При несовпадении почты отображается ошибка, что ник уже занят.
-- ![error](images/error.png)
+ ![error](images/error.png)
 4. На странице чата отображаются последние ```N``` сообщений (параметр ```app.input.size``` - значение по умолчанию = 5) и все активные пользователи. 
-- ![chat](images/chat.png)
+ ![chat](images/chat.png)
 5. Текущий пользователь выделен среди остальных юзеров
-- ![user1](images/chat.png)
-- ![user2](images/user2.png)
+ ![user1](images/chat.png)
+ ![user2](images/user2.png)
 6. Если пользователь закрывает окно браузера с чатом или нажимает на кнопку ```Leave Chat```, для остальных активных пользователей его статус меняется на ```offline```, пользователь перенаправляется на страницу с выбором ника.
-- ![offline](images/offline.png)
+ ![offline](images/offline.png)
