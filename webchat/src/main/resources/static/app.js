@@ -2,6 +2,10 @@ var stompClient = null;
 
 function joinChat() {
     let username = $("#username").val();
+    if (username == null || username.trim() == "") {
+        alert("Username must be filled out");
+        return;
+    }
     sessionStorage.setItem("username", username);
     $.ajax({
       type: "POST",
