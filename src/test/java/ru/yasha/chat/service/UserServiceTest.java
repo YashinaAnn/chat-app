@@ -6,8 +6,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yasha.chat.config.AppConfigs;
 import ru.yasha.chat.dto.UserDto;
 import ru.yasha.chat.entity.User;
+import ru.yasha.chat.exception.UserNotFoundException;
 import ru.yasha.chat.exception.UsernameAlreadyInUseException;
 import ru.yasha.chat.mapper.UserMapper;
 import ru.yasha.chat.repository.UserRepository;
@@ -28,13 +30,15 @@ class UserServiceTest extends BaseServiceTest {
     private UserService userService;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private AppConfigs configs;
     @MockBean
     private SimpMessagingTemplate template;
 
     @Test
     void testJoinNewUser() {
         UserDto userDto = getUserDto();
-        doNothing().when(template).convertAndSend("/topic/users/join", userDto);
+        doNothing().when(template).convertAndSend(configs.getUserJoinedTopic(), userDto);
 
         userService.join(userDto);
 
@@ -43,14 +47,14 @@ class UserServiceTest extends BaseServiceTest {
         assertThat(user.isActive()).isTrue();
 
         verify(template, times(1))
-                .convertAndSend("/topic/users/join", userMapper.userToDto(user));
+                .convertAndSend(configs.getUserJoinedTopic(), userMapper.userToDto(user));
     }
 
     @Test
-    void testJoinExistingUser() {
+    void testJoinExistingInactiveUser() {
         User user = userRepository.save(getUser(false));
         UserDto userDto = userMapper.userToDto(user);
-        doNothing().when(template).convertAndSend("/topic/users/join", userDto);
+        doNothing().when(template).convertAndSend(configs.getUserJoinedTopic(), userDto);
 
         userService.join(userDto);
 
@@ -59,7 +63,7 @@ class UserServiceTest extends BaseServiceTest {
         assertThat(user.isActive()).isTrue();
 
         verify(template, times(1))
-                .convertAndSend("/topic/users/join", userMapper.userToDto(user));
+                .convertAndSend(configs.getUserJoinedTopic(), userMapper.userToDto(user));
     }
 
     @Test
@@ -67,7 +71,7 @@ class UserServiceTest extends BaseServiceTest {
         User user = userRepository.save(getUser(false));
         UserDto userDto = userMapper.userToDto(user);
         userDto.setEmail("another@test.com");
-        doNothing().when(template).convertAndSend("/topic/users/join", userDto);
+        doNothing().when(template).convertAndSend(configs.getUserJoinedTopic(), userDto);
 
         assertThrows(UsernameAlreadyInUseException.class, () -> userService.join(userDto));
 
@@ -76,14 +80,14 @@ class UserServiceTest extends BaseServiceTest {
         assertThat(user.isActive()).isFalse();
 
         verify(template, times(0))
-                .convertAndSend("/topic/users/join", userMapper.userToDto(user));
+                .convertAndSend(configs.getUserJoinedTopic(), userMapper.userToDto(user));
     }
 
     @Test
-    void testLeftUser() {
+    void testLeaveChat() {
         User user = userRepository.save(getUser(true));
         UserDto userDto = userMapper.userToDto(user);
-        doNothing().when(template).convertAndSend("/topic/users/left", userDto);
+        doNothing().when(template).convertAndSend(configs.getUserLeftTopic(), userDto);
 
         userService.leave(userDto);
 
@@ -92,14 +96,14 @@ class UserServiceTest extends BaseServiceTest {
         assertThat(user.isActive()).isFalse();
 
         verify(template, times(1))
-                .convertAndSend("/topic/users/left", userMapper.userToDto(user));
+                .convertAndSend(configs.getUserLeftTopic(), userMapper.userToDto(user));
     }
 
     @Test
-    void testLeftInactiveUser() {
+    void testInactiveUserLeaveChat() {
         User user = userRepository.save(getUser(false));
         UserDto userDto = userMapper.userToDto(user);
-        doNothing().when(template).convertAndSend("/topic/users/left", userDto);
+        doNothing().when(template).convertAndSend(configs.getUserLeftTopic(), userDto);
 
         userService.leave(userDto);
 
@@ -108,15 +112,15 @@ class UserServiceTest extends BaseServiceTest {
         assertThat(user.isActive()).isFalse();
 
         verify(template, times(0))
-                .convertAndSend("/topic/users/left", userMapper.userToDto(user));
+                .convertAndSend(configs.getUserLeftTopic(), userMapper.userToDto(user));
     }
 
     @Test
-    void testLeftNotExistingUser() {
+    void testNotExistingUserLeaveChat() {
         UserDto userDto = getUserDto();
-        doNothing().when(template).convertAndSend("/topic/users/left", userDto);
+        doNothing().when(template).convertAndSend(configs.getUserLeftTopic(), userDto);
 
-        userService.leave(userDto);
+        assertThrows(UserNotFoundException.class, () -> userService.leave(userDto));
 
         assertThat(userRepository.findByName(userDto.getName())).isEmpty();
     }
@@ -127,10 +131,11 @@ class UserServiceTest extends BaseServiceTest {
         User userActive = userRepository.save(getRandomUser(true));
 
         List<UserDto> userList = userService.getActiveUsers();
-        assertThat(userList).isNotNull();
-        assertThat(userList).hasSize(1);
-        assertThat(userList).contains(userMapper.userToDto(userActive));
-        assertThat(userList).doesNotContain(userMapper.userToDto(userInactive));
+        assertThat(userList)
+                .isNotNull()
+                .hasSize(1)
+                .contains(userMapper.userToDto(userActive))
+                .doesNotContain(userMapper.userToDto(userInactive));
     }
 
     @Test
@@ -138,7 +143,6 @@ class UserServiceTest extends BaseServiceTest {
         userRepository.save(getRandomUser(false));
 
         List<UserDto> userList = userService.getActiveUsers();
-        assertThat(userList).isNotNull();
-        assertThat(userList).isEmpty();
+        assertThat(userList).isNotNull().isEmpty();
     }
 }

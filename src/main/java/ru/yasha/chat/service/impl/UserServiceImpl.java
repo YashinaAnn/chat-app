@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yasha.chat.config.AppConfigs;
 import ru.yasha.chat.dto.UserDto;
 import ru.yasha.chat.entity.User;
+import ru.yasha.chat.exception.UserNotFoundException;
 import ru.yasha.chat.exception.UsernameAlreadyInUseException;
 import ru.yasha.chat.mapper.UserMapper;
 import ru.yasha.chat.repository.UserRepository;
@@ -22,11 +24,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final UserMapper userMapper;
+    private final AppConfigs configs;
 
     @Override
     @Transactional
     public UserDto join(UserDto userDto) {
-        log.debug("Joining user {}", userDto.getName());
+        log.debug("Joining user: {}", userDto.getName());
         User user = userRepository.findByName(userDto.getName()).orElse(null);
         if (user != null) {
             if (user.getEmail().equals(userDto.getEmail())) {
@@ -40,18 +43,18 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
         }
         userDto = userMapper.userToDto(user);
-        messagingTemplate.convertAndSend("/topic/users/join", userDto);
+        messagingTemplate.convertAndSend(configs.getUserJoinedTopic(), userDto);
         return userDto;
     }
 
     @Override
     @Transactional
     public void leave(UserDto userDto) {
-        log.debug("Disconnecting users {}", userDto.getName());
-        User user = userRepository.findByName(userDto.getName()).orElse(null);
-        if (user != null && user.isActive()) {
+        log.debug("Disconnecting user: {}", userDto.getName());
+        User user = userRepository.findByName(userDto.getName()).orElseThrow(UserNotFoundException::new);
+        if (user.isActive()) {
             user.setActive(false);
-            messagingTemplate.convertAndSend("/topic/users/left", userMapper.userToDto(user));
+            messagingTemplate.convertAndSend(configs.getUserLeftTopic(), userMapper.userToDto(user));
         }
     }
 

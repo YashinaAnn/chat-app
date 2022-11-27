@@ -34,3 +34,6 @@ app:
   input:
     page: 0
     size: 5
+    userJoinedTopic: "/topic/users/join"
+    userLeftTopic: "/topic/users/left"
+    messagesTopic: "/topic/messages"

@@ -7,6 +7,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yasha.chat.config.AppConfigs;
 import ru.yasha.chat.dto.ChatMessageDto;
 import ru.yasha.chat.entity.ChatMessage;
 import ru.yasha.chat.entity.User;
@@ -33,7 +34,8 @@ class MessageServiceTest extends BaseServiceTest {
     private UserRepository userRepository;
     @Autowired
     private ChatMessageMapper messageMapper;
-
+    @Autowired
+    private AppConfigs configs;
     @MockBean
     private SimpMessagingTemplate template;
 
@@ -51,8 +53,9 @@ class MessageServiceTest extends BaseServiceTest {
         repository.save(ChatMessage.builder().user(user1).text("how are you?").build());
 
         List<ChatMessageDto> messages = messageService.getMessages(PageRequest.of(0, 2));
-        assertThat(messages).hasSize(2);
-        assertThat(messages).isSortedAccordingTo(Comparator.comparing(ChatMessageDto::getTime).reversed());
+        assertThat(messages)
+                .hasSize(2)
+                .isSortedAccordingTo(Comparator.comparing(ChatMessageDto::getTime).reversed());
     }
 
     @Test
@@ -71,7 +74,7 @@ class MessageServiceTest extends BaseServiceTest {
                 .text("test message: %s".formatted(UUID.randomUUID()))
                 .username(user.getName())
                 .build();
-        doNothing().when(template).convertAndSend("/topic/messages", messageDto);
+        doNothing().when(template).convertAndSend(configs.getMessagesTopic(), messageDto);
         assertThat(repository.findByText(messageDto.getText())).isEmpty();
 
         messageService.processMessage(messageDto);
@@ -80,6 +83,6 @@ class MessageServiceTest extends BaseServiceTest {
         assertThat(message).isNotNull();
         assertThat(message.getUser()).isEqualTo(user);
         verify(template, times(1))
-                .convertAndSend("/topic/messages", messageMapper.messageToDto(message));
+                .convertAndSend(configs.getMessagesTopic(), messageMapper.messageToDto(message));
     }
 }
